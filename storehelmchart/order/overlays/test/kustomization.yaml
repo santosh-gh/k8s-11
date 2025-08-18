@@ -1,0 +1,9 @@
+resources:
+  - ../../base
+nameSuffix: "-test"
+commonLabels:
+  env: test
+patches:
+- path: test-values.yaml
+  target:
+    kind: Deployment

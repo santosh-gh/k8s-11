@@ -1,0 +1,41 @@
+parameters:
+- name: "imageTag"
+  type: string
+- name: "helmChartPath"
+  type: string
+- name: "chartName"
+  type: string
+- name: "helmChartVersion"
+  type: string
+- name: "helmRepoName"
+  type: string
+- name: "acrName"
+  type: string
+- name: "serviceConnection"
+  type: string
+
+steps:   
+  - checkout: self
+
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: ${{parameters.serviceConnection}}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |       
+
+        echo "Updating Helm chart version in Chart.yaml"
+        sed -i "s/^version: .*/version: ${{parameters.helmChartVersion}}/" ./${{parameters.helmChartPath}}/${{parameters.chartName}}/Chart.yaml
+        cat ./${{parameters.helmChartPath}}/${{parameters.chartName}}/Chart.yaml
+        
+        echo "Package Helm chart"
+        helm package ./${{parameters.helmChartPath}}/${{parameters.chartName}}/ --version ${{parameters.helmChartVersion}}
+
+        echo "Login to ACR for Helm push"
+        az acr login -n ${{parameters.acrName}}      
+
+        echo "Enabling OCI support"
+        export HELM_EXPERIMENTAL_OCI=1
+
+        echo "Push Helm chart to ACR"
+        helm push ./${{parameters.chartName}}-${{parameters.helmChartVersion}}.tgz oci://${{parameters.acrName}}.azurecr.io/${{parameters.helmRepoName}}
