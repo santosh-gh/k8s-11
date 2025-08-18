@@ -54,6 +54,13 @@
     GitHub:  https://github.com/santosh-gh/k8s-10
     YouTube: https://www.youtube.com/watch?v=VAiR3sNavh0
 
+    Part11:  Manual Deployment (AzCLI + Docker + Helm + kustomize + kubectl)          
+             Deploy into multiple environments (dev, test, prod) using command line tools.
+
+    GitHub:  https://github.com/santosh-gh/k8s-11
+    YouTube: https://www.youtube.com/watch?v=VAiR3sNavh0
+
+
 # Architesture
 
 ![Store Architesture](aks-store-architecture.png)
