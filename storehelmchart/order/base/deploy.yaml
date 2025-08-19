@@ -17,7 +17,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: release-name-order-order-service
+  name: order-service
   labels:
     helm.sh/chart: order-0.1.0
     app.kubernetes.io/name: order

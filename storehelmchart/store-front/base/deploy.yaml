@@ -16,7 +16,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: release-name-store-front-store-front
+  name: store-front
   labels:
     helm.sh/chart: store-front-0.1.0
     app.kubernetes.io/name: store-front

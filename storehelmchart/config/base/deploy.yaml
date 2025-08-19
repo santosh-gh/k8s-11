@@ -1,4 +1,3 @@
----
 # Source: config/templates/configmap.yml
 apiVersion: v1
 data:

@@ -222,8 +222,8 @@ Docker Build and Push
 
     # Store Front Service
     docker build -t store-front ./app/store-front 
-    docker tag store-front:latest $ACR_NAME.azurecr.io/store-front:v2
-    docker push $ACR_NAME.azurecr.io/store-front:v2
+    docker tag store-front:latest $ACR_NAME.azurecr.io/store-front:v1
+    docker push $ACR_NAME.azurecr.io/store-front:v1
 
     docker images
 
