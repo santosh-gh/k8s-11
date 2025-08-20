@@ -1,9 +1,6 @@
 resources:
   - ../../base
-nameSuffix: "-dev"
-commonLabels:
-  env: dev
 patches:
 - path: dev-values.yaml
   target:
-    kind: Deployment
+    kind: StatefulSet

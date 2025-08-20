@@ -5,7 +5,7 @@ storeFront:
   ports:
   - port: 80
     targetPort: 8080
-  replicas: 1
+  replicas: 3
   storeFront:
     image:
       repository: acronlinestoredevuksouth001.azurecr.io/store-front

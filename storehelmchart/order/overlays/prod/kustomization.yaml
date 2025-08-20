@@ -1,8 +1,5 @@
 resources:
   - ../../base
-nameSuffix: "-prod"
-commonLabels:
-  env: prod
 patches:
 - path: prod-values.yaml
   target:

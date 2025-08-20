@@ -17,7 +17,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: product-service
+  name: release-name-product-product-service
   labels:
     helm.sh/chart: product-0.1.0
     app.kubernetes.io/name: product

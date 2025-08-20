@@ -245,3 +245,16 @@ Docker Build and Push
 # Clean the Azure resources
 
     az group delete --name rg-onlinestore-dev-uksouth-001 --yes --no-wait
+
+
+
+        kubectl apply -k ./storehelmchart/config/base/ 
+        kubectl apply -k ./storehelmchart/rabbitmq/overlays/dev 
+        kubectl apply -k ./storehelmchart/order/overlays/dev 
+        kubectl apply -k ./storehelmchart/product/overlays/dev 
+        kubectl apply -k ./storehelmchart/store-front/overlays/dev 
+
+
+            k apply -f ./storehelmchart/config/base/deploy.yaml -n dev
+            k apply -f ./storehelmchart/rabbitmq/base/deploy.yaml -n dev
+            k apply -f ./storehelmchart/order/base/deploy.yaml -n dev
