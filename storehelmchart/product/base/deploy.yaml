@@ -44,7 +44,7 @@ spec:
           value: "http://ai-service:5001/"
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: "cluster.local"
-        image: acronlinestoredevuksouth001.azurecr.io/product
+        image: acronlinestoredevuksouth001.azurecr.io/product:v1
         livenessProbe:
           failureThreshold: 5
           httpGet:
