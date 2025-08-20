@@ -47,7 +47,7 @@ jobs:
                      
                       echo "Updating deployment files with image tags..."
                       sed -i "s|acronlinestoredevuksouth001.azurecr.io/${{parameters.serviceName}}|${{parameters.acrName}}.azurecr.io/${{parameters.serviceName}}:${{parameters.imageTag}}|g"  $(Pipeline.Workspace)/${{parameters.artifactName}}/${{parameters.serviceName}}/base/deploy.yaml                  
-                      cat $(Pipeline.Workspace)/${{parameters.artifactName}}/${{parameters.serviceName}}/base/deployment.yaml
+                      cat $(Pipeline.Workspace)/${{parameters.artifactName}}/${{parameters.serviceName}}/base/deploy.yaml
                    
                   else
 
