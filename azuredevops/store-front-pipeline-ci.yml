@@ -10,7 +10,7 @@ variables:
   - name: serviceName 
     value: 'store-front'
   - name: artifactName 
-    value: 'manifests'
+    value: 'storehelmchart'
   - name: imageTag
     value: $(Build.BuildId)
   - name: imageName

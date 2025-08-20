@@ -11,7 +11,7 @@ variables:
   - name: serviceName 
     value: 'rabbitmq'
   - name: artifactName 
-    value: 'manifests'
+    value: 'storehelmchart'
   - name: imageTag
     value: '3.13'
 

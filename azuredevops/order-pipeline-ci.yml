@@ -11,7 +11,7 @@ variables:
   - name: serviceName 
     value: 'order'
   - name: artifactName 
-    value: 'manifests'
+    value: 'storehelmchart'
   - name: imageTag
     value: $(Build.BuildId)
   - name: imageName
