@@ -40,7 +40,6 @@ stages:
             environment: dev
             namespace: $(namespace)
 
-
   - stage: Test_Deploy
     displayName: Deploy to AKS Test
     dependsOn: Dev_Deploy
