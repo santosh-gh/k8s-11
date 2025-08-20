@@ -1,4 +1,4 @@
-# Part 11: Deploying microservice applications in AKS using Helm Chat and Azure Pipeline
+# Part 11: Deploying microservice applications in AKS using Helm Chart and Kustomize
 
     Part1:   Manual Deployment (AzCLI + Docker Desktop + kubectl)  
     GitHub:  https://github.com/santosh-gh/k8s-01
@@ -60,7 +60,6 @@
     GitHub:  https://github.com/santosh-gh/k8s-11
     YouTube: https://www.youtube.com/watch?v=VAiR3sNavh0
 
-
 # Architesture
 
 ![Store Architesture](aks-store-architecture.png)
@@ -69,7 +68,6 @@
     # Product service: Shows product information.
     # Order service: Places orders.
     # RabbitMQ: Message queue for an order queue.
-
 
 # Directory Structure
 
@@ -84,13 +82,13 @@
     Helm
     kustomization
 
-    
+    # HELM
     Helm works in the concept of templating
 
     A template is a form that has placeholders that an automated process will 
     parse to replace them with values.
 
-
+    # KUSTOMIZE
     Kustomize is a native K8s tool for customizing K8s objects.
 
     Kustomize works in the concept of overlays.
@@ -109,21 +107,20 @@
     Also benefits in moving the repeated parts of the config across resources to 
     the overlays layer to easily manage those configs.
 
-    There are 2 approches using Helm and Kustomization togeteher:
+    There are 2 approches for using Helm and Kustomize togeteher:
 
-    1. Template First Approach
+    1. Template First
 
        Pros: Can fully utilize helm features.
 
        Cons: No release versioning and rollbacks.
 
-    2. Overlay First Approach
+    2. Overlay First
 
        Pros: Helm’s packaging and versioning
              Release versioning and rollbacks
 
         Cons: Limited helm benefits
-
 
 # Steps
 
@@ -131,7 +128,8 @@
 
     2. Build and push images to ACR: Docker Desktop
 
-    3. kustomize install
+    3. Install Helm & Kustomize
+
        Kustomize comes pre bundled with kubectl version >= 1.14
 
        Linux: sudo install -o root -g root -m 0755 kustomize /usr/local/bin/kustomize
@@ -142,109 +140,59 @@
 
     4. Update Helm Chart Directory to overlay with kustomize     
 
-    5. App deployment
+    5. App deployment        
 
-        # Review
+    6. Validate and Access the application
 
-        helm template ./storehelmchart/config > ./storehelmchart/config/base/deploy.yaml
-        helm template ./storehelmchart/order > ./storehelmchart/order/base/deploy.yaml
-        helm template ./storehelmchart/product > ./storehelmchart/product/base/deploy.yaml
-        helm template ./storehelmchart/rabbitmq > ./storehelmchart/rabbitmq/base/deploy.yaml
-        helm template ./storehelmchart/store-front > ./storehelmchart/store-front/base/deploy.yaml
-
-
-        kustomize build ./storehelmchart/order/overlays/dev
-        kustomize build ./storehelmchart/order/overlays/test
-        kustomize build ./storehelmchart/order/overlays/prod        
-
-        kubectl kustomize ./storehelmchart/config/base/
-        kubectl kustomize ./storehelmchart/rabbitmq/overlays/dev
-        kubectl kustomize ./storehelmchart/order/overlays/dev
-        kubectl kustomize ./storehelmchart/product/overlays/dev
-        kubectl kustomize ./storehelmchart/store-front/overlays/dev
-
-        kubectl kustomize ./storehelmchart/config/base/
-        kubectl kustomize ./storehelmchart/rabbitmq/overlays/test
-        kubectl kustomize ./storehelmchart/order/overlays/test
-        kubectl kustomize ./storehelmchart/product/overlays/test
-        kubectl kustomize ./storehelmchart/store-front/overlays/test
-
-        kubectl kustomize ./storehelmchart/config/base/
-        kubectl kustomize ./storehelmchart/rabbitmq/overlays/prod
-        kubectl kustomize ./storehelmchart/order/overlays/prod
-        kubectl kustomize ./storehelmchart/product/overlays/prod
-        kubectl kustomize ./storehelmchart/store-front/overlays/prod
-
-        # Apply Patches
-
-        kustomize build ./storehelmchart/order/overlays/dev | kubectl apply -f . -n dev
-
-        kubectl apply -k ./storehelmchart/config/base/ -n dev
-        kubectl apply -k ./storehelmchart/rabbitmq/overlays/dev -n dev
-        kubectl apply -k ./storehelmchart/order/overlays/dev -n dev
-        kubectl apply -k ./storehelmchart/product/overlays/dev -n dev
-        kubectl apply -k ./storehelmchart/store-front/overlays/dev -n dev
-
-        kubectl apply -k ./storehelmchart/config/base/ -n test
-        kubectl apply -k ./storehelmchart/rabbitmq/overlays/test -n test
-        kubectl apply -k ./storehelmchart/order/overlays/test -n test
-        kubectl apply -k ./storehelmchart/product/overlays/test -n test
-        kubectl apply -k ./storehelmchart/store-front/overlays/test -n test
-
-        kubectl apply -k ./storehelmchart/config/base/ -n prod
-        kubectl apply -k ./storehelmchart/rabbitmq/overlays/prod -n prod
-        kubectl apply -k ./storehelmchart/order/overlays/prod -n prod
-        kubectl apply -k ./storehelmchart/product/overlays/prod -n prod
-        kubectl apply -k ./storehelmchart/store-front/overlays/prod -n prod
-
-    5. Validate and Access the application
-
-    6. Clean the Azure resources
+    7. Clean the Azure resources
     
 # Infra deployment
 
     # Login to Azure
 
-        az login
-        az account set --subscription=<subscriptionId>
-        az account show
+    az login
+    az account set --subscription=<subscriptionId>
+    az account show
 
     # Show existing resources
 
-        az resource list
+    az resource list
 
     # Create RG, ACR and AKS
 
-        # AzCLI
-        ./infra/azcli/script.sh
+    # AzCLI
+    ./infra/azcli/script.sh
 
-        OR
+    OR
 
-        # Bicep
-        az deployment sub create --location uksouth --template-file ./infra/bicep/main.bicep --parameters ./infra/bicep/main.bicepparam
+    # Bicep
+    az deployment sub create --location uksouth --template-file ./infra/bicep/main.bicep --parameters ./infra/bicep/main.bicepparam
 
     # Connect to cluster
 
-        RESOURCE_GROUP="rg-onlinestore-dev-uksouth-001"
-        AKS_NAME="aks-onlinestore-dev-uksouth-001"
-        az aks get-credentials --resource-group $RESOURCE_GROUP --name $AKS_NAME --overwrite-existing
+    RESOURCE_GROUP="rg-onlinestore-dev-uksouth-001"
+    AKS_NAME="aks-onlinestore-dev-uksouth-001"
+    az aks get-credentials --resource-group $RESOURCE_GROUP --name $AKS_NAME --overwrite-existing
 
-        # Short name for kubectl
-        alias k=kubectl
+    # Short name for kubectl
+    alias k=kubectl
 
-        # Create name spaces
-        k create ns dev
-        k create ns test
-        k create ns prod    
+    # Create name spaces
+    k create ns dev
+    k create ns test
+    k create ns prod    
 
-        # Show all existing objects
-        k get all   
+    # Show all existing objects
+    k get all
 
-Docker Build and Push
-# Log in to ACR
+# Docker Build and Push to ACR
+
+    # Log in to ACR
 
     ACR_NAME="acronlinestoredevuksouth001"
     az acr login --name $ACR_NAME
+
+    docker images
 
     # Build and push the Docker images to ACR
 
@@ -261,20 +209,90 @@ Docker Build and Push
     # Store Front Service
     docker build -t store-front ./app/store-front 
     docker tag store-front:latest $ACR_NAME.azurecr.io/store-front:v1
-    docker push $ACR_NAME.azurecr.io/store-front:v1
+    docker push $ACR_NAME.azurecr.io/store-front:v1    
 
-    docker images
+# Install Helm 
+
+# Install Kustomize
+
+    Kustomize comes pre bundled with kubectl version >= 1.14
+
+    Linux: sudo install -o root -g root -m 0755 kustomize /usr/local/bin/kustomize
+    Mac: brew install kustomize
+    Windows: choco install kustomize
+
+    kustomize version 
+
+# Update Helm Chart Directory to overlay with kustomize
+
+# Generate output template (deploy.yaml)
+
+    helm template ./storehelmchart/config > ./storehelmchart/config/base/deploy.yaml
+    helm template ./storehelmchart/order > ./storehelmchart/order/base/deploy.yaml
+    helm template ./storehelmchart/product > ./storehelmchart/product/base/deploy.yaml
+    helm template ./storehelmchart/rabbitmq > ./storehelmchart/rabbitmq/base/deploy.yaml
+    helm template ./storehelmchart/store-front > ./storehelmchart/store-front/base/deploy.yaml
+
+# Review deploy manifest (apply patches)    
+
+    kustomize build ./storehelmchart/order/overlays/dev
+    kustomize build ./storehelmchart/order/overlays/test
+    kustomize build ./storehelmchart/order/overlays/prod        
+
+    kubectl kustomize ./storehelmchart/config/base/
+    kubectl kustomize ./storehelmchart/rabbitmq/overlays/dev
+    kubectl kustomize ./storehelmchart/order/overlays/dev
+    kubectl kustomize ./storehelmchart/product/overlays/dev
+    kubectl kustomize ./storehelmchart/store-front/overlays/dev
+
+    kubectl kustomize ./storehelmchart/config/base/
+    kubectl kustomize ./storehelmchart/rabbitmq/overlays/test
+    kubectl kustomize ./storehelmchart/order/overlays/test
+    kubectl kustomize ./storehelmchart/product/overlays/test
+    kubectl kustomize ./storehelmchart/store-front/overlays/test
+
+    kubectl kustomize ./storehelmchart/config/base/
+    kubectl kustomize ./storehelmchart/rabbitmq/overlays/prod
+    kubectl kustomize ./storehelmchart/order/overlays/prod
+    kubectl kustomize ./storehelmchart/product/overlays/prod
+    kubectl kustomize ./storehelmchart/store-front/overlays/prod
+
+# Apply the manifest
+
+    kustomize build ./storehelmchart/order/overlays/dev | kubectl apply -f . -n dev
+
+    kubectl apply -k ./storehelmchart/config/base/ -n dev
+    kubectl apply -k ./storehelmchart/rabbitmq/overlays/dev -n dev
+    kubectl apply -k ./storehelmchart/order/overlays/dev -n dev
+    kubectl apply -k ./storehelmchart/product/overlays/dev -n dev
+    kubectl apply -k ./storehelmchart/store-front/overlays/dev -n dev
+
+    kubectl apply -k ./storehelmchart/config/base/ -n test
+    kubectl apply -k ./storehelmchart/rabbitmq/overlays/test -n test
+    kubectl apply -k ./storehelmchart/order/overlays/test -n test
+    kubectl apply -k ./storehelmchart/product/overlays/test -n test
+    kubectl apply -k ./storehelmchart/store-front/overlays/test -n test
+
+    kubectl apply -k ./storehelmchart/config/base/ -n prod
+    kubectl apply -k ./storehelmchart/rabbitmq/overlays/prod -n prod
+    kubectl apply -k ./storehelmchart/order/overlays/prod -n prod
+    kubectl apply -k ./storehelmchart/product/overlays/prod -n prod
+    kubectl apply -k ./storehelmchart/store-front/overlays/prod -n prod
+
+# Verify the Deployment
+
+    k get pods -n dev
+    k get services -n dev
+
+    curl <LoadBalancer public IP>:80
+    Browse the app using http://<LoadBalancer public IP>:80
 
 # Clean the k8s namespace
 
     k delete all --all -n default
-
-# Verify the Deployment
-
-    k get pods
-    k get services
-    curl <LoadBalancer public IP>:80
-    Browse the app using http://<LoadBalancer public IP>:80
+    k delete all --all -n dev
+    k delete all --all -n test
+    k delete all --all -n prod
 
 # Clean the Azure resources
 
