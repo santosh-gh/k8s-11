@@ -4,52 +4,29 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  - group: k8s-common
-  - name: helmRepoName
-    value: 'helm'
-  - name: chartName 
+  - group: k8s-common  
+  - name: serviceName 
     value: 'config'
-  - name: helmChartPath 
-    value: './storehelmchart/'
-  - name: helmChartVersion
-    value: $(Build.BuildId)
+  - name: artifactName 
+    value: 'storehelmchart'
 
-stages:
-  - stage: HelmPackagePush
-    displayName: Helm Package and Push
-    jobs:
-    - job: Helm
-      pool:
-        vmImage: 'ubuntu-latest'
-      steps:
-        - template: appTemplates/helm-push.yml
-          parameters:
-            imageTag: $(imageTag)
-            helmChartPath: $(helmChartPath)
-            chartName: $(chartName)
-            helmChartVersion: $(helmChartVersion) 
-            helmRepoName: $(helmRepoName)
-            acrName: $(acrName)
-            serviceConnection: $(serviceConnection)
-
+stages:  
   - stage: Dev_Deploy
     displayName: Deploy to AKS Dev
-    dependsOn: HelmPackagePush
+    dependsOn: Publish
     variables:
       - group: 'k8s-dev'
     jobs:
       - template: appTemplates/deploy.yml
         parameters:
-            chartName: $(chartName)
-            helmChartVersion: $(helmChartVersion) 
-            helmRepoName: $(helmRepoName)
+            artifactName: $(artifactName)
+            serviceName: $(serviceName)
             acrName: $(acrName)
             aksCluster: $(aksCluster)
             aksResourceGroup: $(aksResourceGroup) 
             serviceConnection: $(serviceConnection)
             environment: dev
             namespace: $(namespace)
-            helmChartPath: $(helmChartPath)
 
   - stage: Test_Deploy
     displayName: Deploy to AKS Test
@@ -59,16 +36,14 @@ stages:
     jobs:
       - template: appTemplates/deploy.yml
         parameters:
-            chartName: $(chartName)
-            helmChartVersion: $(helmChartVersion) 
-            helmRepoName: $(helmRepoName)
+            artifactName: $(artifactName)
+            serviceName: $(serviceName)
             acrName: $(acrName)
             aksCluster: $(aksCluster)
             aksResourceGroup: $(aksResourceGroup) 
             serviceConnection: $(serviceConnection)
             environment: test
             namespace: $(namespace)
-            helmChartPath: $(helmChartPath)
 
   - stage: Prod_Deploy
     displayName: Deploy to AKS Prod
@@ -78,15 +53,11 @@ stages:
     jobs:
       - template: appTemplates/deploy.yml
         parameters:
-            chartName: $(chartName)
-            helmChartVersion: $(helmChartVersion) 
-            helmRepoName: $(helmRepoName)
+            artifactName: $(artifactName)
+            serviceName: $(serviceName)
             acrName: $(acrName)
             aksCluster: $(aksCluster)
             aksResourceGroup: $(aksResourceGroup) 
             serviceConnection: $(serviceConnection)
             environment: prod
             namespace: $(namespace)
-            helmChartPath: $(helmChartPath)
-
-  

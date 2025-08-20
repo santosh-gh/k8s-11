@@ -1,0 +1,29 @@
+trigger:
+  paths:
+    include:
+      - app/store-front/**
+      
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: k8s-common  
+  - name: serviceName 
+    value: 'rabbitmq'
+  - name: artifactName 
+    value: 'storehelmchart'
+  - name: imageTag
+    value: '3.13'
+
+stages:
+  - stage: Publish
+    displayName: Publish Manifest
+    jobs:
+      - job: PublishManifest
+        displayName: Publish Manifest
+        steps:          
+          - task: PublishPipelineArtifact@1
+            displayName: Publish Manifest
+            inputs:
+              targetPath: "$(Build.SourcesDirectory)/$(artifactName)"
+              artifact: $(artifactName)

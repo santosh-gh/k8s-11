@@ -1,0 +1,38 @@
+trigger:
+  paths:
+    include:
+      - app/order/**
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: k8s-common  
+  - name: serviceName 
+    value: 'order'
+  - name: artifactName 
+    value: 'storehelmchart'
+  - name: imageTag
+    value: $(Build.BuildId)
+  - name: imageName
+    value: 'order'
+
+stages:
+  - stage: Build
+    displayName: Docker Build and Push
+    jobs:
+      - job: BuildPublishDockerImages
+        displayName: Build nad push Docker Images
+        steps:
+          - template: appTemplates/build.yml
+            parameters:
+              acrServiceConnection: $(acrServiceConnection)
+              imageName: $(imageName)
+              dockerFilePath: '$(Build.sourcesdirectory)/app/order-service/Dockerfile'
+              tag: $(imageTag)
+          
+          - task: PublishPipelineArtifact@1
+            displayName: Publish Manifest
+            inputs:
+              targetPath: "$(Build.SourcesDirectory)/$(artifactName)"
+              artifact: $(artifactName)

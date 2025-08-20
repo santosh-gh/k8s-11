@@ -84,6 +84,47 @@
     Helm
     kustomization
 
+    
+    Helm works in the concept of templating
+
+    A template is a form that has placeholders that an automated process will 
+    parse to replace them with values.
+
+
+    Kustomize is a native K8s tool for customizing K8s objects.
+
+    Kustomize works in the concept of overlays.
+    An overlay is a set of replacement strings. 
+    Blocks of text in the original file are entirely replaced with new blocks of text
+
+    A template-free way to customize application configuration without 
+    modifying the original resource files using a declarative approach.
+
+    Kustomize employs overlays to apply specific changes for different environments, making it 
+    ideal for managing configurations across multiple environments of the application.
+
+    If we want to change, add, or remove some configuration. we can use Kustomize to set up the base 
+    resources and patch the configuration on top of the base resources based on different overlays.     
+    
+    Also benefits in moving the repeated parts of the config across resources to 
+    the overlays layer to easily manage those configs.
+
+    There are 2 approches using Helm and Kustomization togeteher:
+
+    1. Template First Approach
+
+       Pros: Can fully utilize helm features.
+
+       Cons: No release versioning and rollbacks.
+
+    2. Overlay First Approach
+
+       Pros: Helm’s packaging and versioning
+             Release versioning and rollbacks
+
+        Cons: Limited helm benefits
+
+
 # Steps
 
     1. Infra deployment using AzCLI command line tool
@@ -99,7 +140,7 @@
 
        kustomize version 
 
-    4. Manifest Directory structure for kustomize     
+    4. Update Helm Chart Directory to overlay with kustomize     
 
     5. App deployment
 
@@ -114,10 +155,7 @@
 
         kustomize build ./storehelmchart/order/overlays/dev
         kustomize build ./storehelmchart/order/overlays/test
-        kustomize build ./storehelmchart/order/overlays/prod
-
-
-        kustomize build ./storehelmchart/order/overlays/dev
+        kustomize build ./storehelmchart/order/overlays/prod        
 
         kubectl kustomize ./storehelmchart/config/base/
         kubectl kustomize ./storehelmchart/rabbitmq/overlays/dev
@@ -139,7 +177,7 @@
 
         # Apply Patches
 
-         kustomize build ./storehelmchart/order/overlays/dev | kubectl apply -f . -n dev
+        kustomize build ./storehelmchart/order/overlays/dev | kubectl apply -f . -n dev
 
         kubectl apply -k ./storehelmchart/config/base/ -n dev
         kubectl apply -k ./storehelmchart/rabbitmq/overlays/dev -n dev
@@ -227,10 +265,6 @@ Docker Build and Push
 
     docker images
 
-# Review and apply
-
-    
-
 # Clean the k8s namespace
 
     k delete all --all -n default
@@ -245,16 +279,3 @@ Docker Build and Push
 # Clean the Azure resources
 
     az group delete --name rg-onlinestore-dev-uksouth-001 --yes --no-wait
-
-
-
-        kubectl apply -k ./storehelmchart/config/base/ 
-        kubectl apply -k ./storehelmchart/rabbitmq/overlays/dev 
-        kubectl apply -k ./storehelmchart/order/overlays/dev 
-        kubectl apply -k ./storehelmchart/product/overlays/dev 
-        kubectl apply -k ./storehelmchart/store-front/overlays/dev 
-
-
-            k apply -f ./storehelmchart/config/base/deploy.yaml -n dev
-            k apply -f ./storehelmchart/rabbitmq/base/deploy.yaml -n dev
-            k apply -f ./storehelmchart/order/base/deploy.yaml -n dev
