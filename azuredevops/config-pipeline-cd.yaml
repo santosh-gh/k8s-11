@@ -13,7 +13,6 @@ variables:
 stages:  
   - stage: Dev_Deploy
     displayName: Deploy to AKS Dev
-    dependsOn: Publish
     variables:
       - group: 'k8s-dev'
     jobs:
