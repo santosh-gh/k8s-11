@@ -54,7 +54,7 @@ spec:
           value: "0.0.0.0"
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: "cluster.local"
-        image: acronlinestoredevuksouth001.azurecr.io/order:v1
+        image: acronlinestoredevuksouth001.azurecr.io/order
         livenessProbe:
           failureThreshold: 5
           httpGet:
